@@ -28,6 +28,7 @@ public class TapInputTest : MonoBehaviour
         tapInputManager.OnRawSensorDataReceived += onRawSensorDataReceived;
         tapInputManager.EnableDebug ();
         mouseHIDEnabled = false;
+        Log("Hello world, this is the TAP API starting up!");
         
 	}
     

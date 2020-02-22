@@ -27,18 +27,22 @@ public class TapInputStandaloneWin : Singleton<TapInputStandaloneWin>, ITapInput
 
     [DllImport("TAPWin")]
     extern static void TAPWinUnityBridgeSetActivated(bool enabled);
-    
-    
+
+    private const Char ARGS_SEPERATOR = '|';
+
     public event Action OnBluetoothTurnedOn;
     public event Action OnBluetoothTurnedOff;
     public event Action<string, string, int> OnTapConnected;
     public event Action<string> OnTapDisconnected;
+    public event Action<string> OnControllerModeStarted;
+    public event Action<string> OnTextModeStarted;
     public event Action<string, int> OnTapInputReceived;
     public event Action<string, int, int, bool> OnMouseInputReceived;
     public event Action<string[]> OnConnectedTapsReceived;
     public event Action<string, int> OnModeReceived;
-    public event Action<string, int> OnAirGestureInputReceived;
-    public event Action<string, int> OnTapChangedAirGestureState;
+    public event Action<string, TapAirGesture> OnAirGestureInputReceived;
+    public event Action<string, bool> OnTapChangedAirGestureState;
+    public event Action<string, RawSensorData> OnRawSensorDataReceived;
 
     public void DisableDebug()
     {
@@ -165,6 +169,87 @@ public class TapInputStandaloneWin : Singleton<TapInputStandaloneWin>, ITapInput
     void readAllTapsState()
     {
         
+    }
+
+
+    private void onAirGestureInputReceived(String args)
+    {
+        if (OnAirGestureInputReceived != null)
+        {
+            string[] argParts = args.Split(ARGS_SEPERATOR);
+            if (argParts.Length >= 2)
+            {
+                int gesture = 0;
+                if (Int32.TryParse(argParts[1], out gesture)) 
+                {
+                    if (Enum.IsDefined(typeof(TapAirGesture), gesture))
+                    {
+                        OnAirGestureInputReceived(argParts[0], (TapAirGesture)gesture);
+                    }
+                }
+            }
+            
+        }
+    }
+
+    private void onTapChangedAirGestureState(String args)
+    {
+        if (OnTapChangedAirGestureState != null)
+        {
+            string[] argParts = args.Split(ARGS_SEPERATOR);
+            if (argParts.Length >= 2)
+            {
+                int state = 0;
+                
+                if (Int32.TryParse(argParts[1], out state)) 
+                {
+                    OnTapChangedAirGestureState(argParts[0], state == 1);
+                }
+            }
+
+        }
+    }
+
+    private void onRawSensorDataReceived(String rsArg)
+    {
+        if (OnRawSensorDataReceived != null)
+        {
+            string[] argParts = rsArg.Split(ARGS_SEPERATOR);
+            if (argParts.Length == 2)
+            {
+                RawSensorData data = RawSensorData.makeFromString(argParts[1], "^");
+                if (data != null)
+                {
+                   OnRawSensorDataReceived(argParts[0], data);
+                }
+            }
+        }
+    }
+
+    public void StartControllerWithMouseHIDMode(string tapIdentifier)
+    {
+        tapUnityAdapter.Call("startControllerWithMouseHIDMode", tapIdentifier);
+    }
+
+    public void StartRawSensorMode(string tapIdentifier, int deviceAccelerometerSensitivity, int imuGyroSensitivity, int imuAccelerometerSensitivity)
+    {
+        tapUnityAdapter.Call("startRawSensorMode", tapIdentifier, deviceAccelerometerSensitivity, imuGyroSensitivity, imuAccelerometerSensitivity);
+    }
+
+    public void Vibrate(string tapIdentifier, int[] durations)
+    {
+        string durationsString = "";
+        string delimeter = "^";
+        for (int i = 0; i < durations.Length; i++)
+        {
+            durationsString = durationsString + durations[i].ToString();
+            if (i < durations.Length - 1)
+            {
+                durationsString = durationsString + delimeter;
+            }
+        }
+        tapUnityAdapter.Call("vibrate", tapIdentifier, durationsString, delimeter);
+
     }
 
     public bool IsAnyTapSupportsAirMouse()

@@ -142,7 +142,7 @@ public class RawSensorData
             return this.points[index];
         } else
         {
-            return null;
+            return Vector3.zero;
         }
     }
 }
