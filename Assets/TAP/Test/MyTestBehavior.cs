@@ -134,8 +134,27 @@ public class MyTestBehavior : MonoBehaviour
         }
     }
 
-    public void TweakEQParam()
+    public void Play()
     {
-        mixer.SetFloat("MyExposedParam 6", .05f);
+        source.UnPause();
+    }
+
+    public void Pause()
+    {
+        source.Pause();
+    }
+
+    public void VolumeUp()
+    {
+        float foofloat = 0;
+        mixer.GetFloat("vol", out foofloat);
+        mixer.SetFloat("vol", foofloat + 1.5f);
+    }
+
+    public void VolumeDown()
+    {
+        float foofloat = 0;
+        mixer.GetFloat("vol", out foofloat);
+        mixer.SetFloat("vol", foofloat - 1.5f);
     }
 }

@@ -34,6 +34,8 @@ AudioMixerController:
   m_EnableSuspend: 1
   m_UpdateMode: 0
   m_ExposedParameters:
+  - guid: ec27f67e63cee6f40a236c37d8c5cc2d
+    name: vol
   - guid: 093dc069993fdae40af172a5b0e67d1d
     name: MyExposedParam 5
   - guid: 40158f44a90f61c489af0acbb05ac57e
@@ -105,6 +107,7 @@ AudioMixerSnapshotController:
     71e7a0b7d1d502b4096f528cc31cf0cf: 1
     cb42e3da5f5a90e48aded175fac2f241: 5000
     b0bb2c4d1159d4a4a9bf4eb1d7143fc9: 48
+    ec27f67e63cee6f40a236c37d8c5cc2d: 0
   m_TransitionOverrides: {}
 --- !u!244 &2317713526082420803
 AudioMixerEffectController:

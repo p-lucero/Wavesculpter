@@ -65,9 +65,21 @@ public class TapInputTest : MonoBehaviour
     {
 				bool[] arr = TapCombination.toFingers (combination);
         Log("onTapped : " + identifier + ", " + combination);
-        if (arr[1])
+        if (combination == 2)
         {
-            other.TweakEQParam();
+            other.VolumeUp();
+        }
+        if (combination == 4)
+        {
+            other.VolumeDown();
+        }
+        if (combination == 8)
+        {
+            other.Play();
+        }
+        if (combination == 16)
+        {
+            other.Pause();
         }
 	}
 
