@@ -56,6 +56,7 @@ public class TapInputTest : MonoBehaviour
         Debug.Log("onTapConnected : " + identifier + ", " + name + ", FW: " + fw);
         Log("onTapConnected : " + identifier + ", " + name);
         this.connectedTapIdentifier = identifier;
+        tapInputManager.StartRawSensorMode(this.connectedTapIdentifier, 1, 1, 1);
     }
 
     void onTapDisconnected(string identifier)
@@ -83,6 +84,7 @@ public class TapInputTest : MonoBehaviour
 
     void onRawSensorDataReceived(string tapIdentifier, RawSensorData data)
     {
+        Log("Receiving a bit of raw sensor data");
         //RawSensorData Object has a timestamp, type and an array points(x,y,z).
         if (data.type == RawSensorData.DataType.Device)
         {
