@@ -81,6 +81,22 @@ public class TapInputTest : MonoBehaviour
         {
             other.Pause();
         }
+        if (combination == 6)
+        {
+            other.PitchUp();
+        }
+        if (combination == 24)
+        {
+            other.PitchDown();
+        }
+        if (combination == 17)
+        {
+            other.DistortUp();
+        }
+        if (combination == 14)
+        {
+            other.DistortDown();
+        }
 	}
 
 	void onTapConnected(string identifier, string name, int fw)

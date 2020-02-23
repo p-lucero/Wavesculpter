@@ -157,4 +157,32 @@ public class MyTestBehavior : MonoBehaviour
         mixer.GetFloat("vol", out foofloat);
         mixer.SetFloat("vol", foofloat - 1.5f);
     }
+
+    public void PitchUp()
+    {
+        float foofloat = 0;
+        mixer.GetFloat("pitch", out foofloat);
+        mixer.SetFloat("pitch", foofloat * 1.1f);
+    }
+
+    public void PitchDown()
+    {
+        float foofloat = 0;
+        mixer.GetFloat("pitch", out foofloat);
+        mixer.SetFloat("pitch", foofloat / 1.1f);
+    }
+
+    public void DistortUp()
+    {
+        float foofloat = 0;
+        mixer.GetFloat("distort", out foofloat);
+        mixer.SetFloat("distort", foofloat + 5f);
+    }
+
+    public void DistortDown()
+    {
+        float foofloat = 0;
+        mixer.GetFloat("distort", out foofloat);
+        mixer.SetFloat("distort", foofloat - 5f);
+    }
 }
