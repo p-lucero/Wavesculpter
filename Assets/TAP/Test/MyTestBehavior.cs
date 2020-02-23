@@ -8,7 +8,8 @@ public class MyTestBehavior : MonoBehaviour
 
     private const int N_FFT_BINS = 64;
     private const int N_SAMPLE_REGIONS = 64;
-    private const double SCALE_FACTOR = 0.04;
+    private const double HORIZONTAL_CUBE_SCALE = 0.04;
+    private const double VERTICAL_CUBE_SCALE = 3;
 
     private string audio_file_loc = "Assets/chanceonus_bar.wav"; // intentionally not git-ed
 
@@ -19,20 +20,29 @@ public class MyTestBehavior : MonoBehaviour
     private float duration_seconds;
     private int sample_rate;
     private int duration_samples;
+    private int samples_elapsed = 0;
+    private int current_sample_set = 0;
 
     private GameObject[,] amplitude_surface;
+    private float[] fft_samples;
+
+    private int m_frameCounter = 0;
+    private float m_timeCounter = 0.0f;
+    private float m_lastFramerate = 0.0f;
+    public float m_refreshTime = 0.5f;
 
     void Start()
     {
         // clip  = Resources.Load<AudioClip>(audio_file_loc);
         source = GetComponent<AudioSource>();
+        clip = source.clip;
         // source.clip = clip;
         // source.Play(0);
         // Debug.Log("Started playback");
 
-        // duration_seconds = clip.length;
-        // sample_rate = clip.frequency;
-        // duration_samples = clip.samples;
+        duration_seconds = clip.length;
+        sample_rate = clip.frequency;
+        duration_samples = clip.samples;
 
         amplitude_surface = new GameObject[N_FFT_BINS, N_SAMPLE_REGIONS];
 
@@ -43,11 +53,11 @@ public class MyTestBehavior : MonoBehaviour
                 amplitude_surface[i, j] = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 // amplitude_surface[i, j].name = "Cube" + (i + 1).ToString() + "_" + (j + 1).ToString();
                 // amplitude_surface[i, j].transform.Rotate(0.0f, 1f, 0.0f);
-                // amplitude_surface[i, j].transform.position = new Vector3((float)(SCALE_FACTOR * i + SCALE_FACTOR * N_FFT_BINS / 2), (float)(SCALE_FACTOR * j - SCALE_FACTOR * N_SAMPLE_REGIONS / 2), 0);
+                // amplitude_surface[i, j].transform.position = new Vector3((float)(HORIZONTAL_CUBE_SCALE * i + HORIZONTAL_CUBE_SCALE * N_FFT_BINS / 2), (float)(HORIZONTAL_CUBE_SCALE * j - HORIZONTAL_CUBE_SCALE * N_SAMPLE_REGIONS / 2), 0);
                 // amplitude_surface[i, j].GetComponent<Renderer>().material.color = new Color(16, 16, 16);
-                amplitude_surface[i, j].GetComponent<Renderer>().material.color = new Color((((float)i) / N_FFT_BINS) * 6, (((float)j) / N_FFT_BINS) * 6, 0);
-                amplitude_surface[i, j].transform.position = new Vector3((float)(SCALE_FACTOR * i - SCALE_FACTOR * N_FFT_BINS / 2) * 2, -4, (float)(SCALE_FACTOR * j - SCALE_FACTOR * N_FFT_BINS / 2) * 2);
-                amplitude_surface[i, j].transform.localScale = new Vector3((float)SCALE_FACTOR, 1, (float)SCALE_FACTOR);
+                amplitude_surface[i, j].GetComponent<Renderer>().material.color = new Color((((float)i) / N_FFT_BINS) * 6, (((float)j) / N_SAMPLE_REGIONS) * 6, 0);
+                amplitude_surface[i, j].transform.position = new Vector3((float)(HORIZONTAL_CUBE_SCALE * i - HORIZONTAL_CUBE_SCALE * N_FFT_BINS / 2) * 2, 0, (float)(HORIZONTAL_CUBE_SCALE * j - HORIZONTAL_CUBE_SCALE * N_SAMPLE_REGIONS / 2) * 2);
+                amplitude_surface[i, j].transform.localScale = new Vector3((float)HORIZONTAL_CUBE_SCALE, (float)VERTICAL_CUBE_SCALE, (float)HORIZONTAL_CUBE_SCALE);
             }
             if (i % 128 == 0)
             {
@@ -57,10 +67,9 @@ public class MyTestBehavior : MonoBehaviour
 
         Debug.Log("Created some cubes!");
 
-        // Transform myTransform = 
+        fft_samples = new float[N_FFT_BINS];
 
-        // Camera.transform.position = new Vector3(0, 0, 0);
-        // Camera.main.GetComponent<Transform>().Rotate(45, 0, 0);
+        Camera.main.GetComponent<Transform>().LookAt(amplitude_surface[N_FFT_BINS / 2, N_SAMPLE_REGIONS / 2].GetComponent<Transform>());
     }
 
     void Awake()
@@ -70,7 +79,32 @@ public class MyTestBehavior : MonoBehaviour
 
     void Update()
     {
-        
+        if (m_timeCounter < m_refreshTime)
+        {
+            m_timeCounter += Time.deltaTime;
+            m_frameCounter++;
+        }
+        else
+        {
+            m_lastFramerate = (float)m_frameCounter / m_timeCounter;
+            m_frameCounter = 0;
+            m_timeCounter = 0.0f;
+        }
+        // if (samples_elapsed < duration_samples)
+        // {
+            // int samples_this_update = (int)(m_lastFramerate * sample_rate);
+            if (current_sample_set != N_SAMPLE_REGIONS) 
+            {
+                source.GetSpectrumData(fft_samples, 0, FFTWindow.Triangle);
+                for (int i = 0; i < N_FFT_BINS; i++)
+                {
+                    amplitude_surface[i, current_sample_set].transform.localScale = new Vector3((float)HORIZONTAL_CUBE_SCALE, (float)(fft_samples[i] * VERTICAL_CUBE_SCALE), (float)HORIZONTAL_CUBE_SCALE);
+                }
+
+                // samples_elapsed += samples_this_update;
+                current_sample_set++;
+            }
+        // }
     }
 
     void OnGUI()
