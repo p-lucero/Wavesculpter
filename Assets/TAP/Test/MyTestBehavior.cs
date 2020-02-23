@@ -6,11 +6,11 @@ using System;
 
 public class MyTestBehavior : MonoBehaviour
 {
-    private const int N_FFT_BINS = 64;
-    private const int N_SAMPLE_REGIONS = 64;
-    private const double HORIZONTAL_CUBE_SCALE = 0.04;
-    private const double VERTICAL_CUBE_SCALE = 3;
-    private const double FFT_SCALE_BASE = 1.087;
+    private const int N_FFT_BINS = 128;
+    private const int N_SAMPLE_REGIONS = 128;
+    private const double HORIZONTAL_CUBE_SCALE = 0.02;
+    private const double VERTICAL_CUBE_SCALE = 1.5;
+    private const double FFT_SCALE_BASE = 1.055;
 
     private string audio_file_loc = "Assets/chanceonus_bar.wav"; // intentionally not git-ed
 
@@ -122,16 +122,16 @@ public class MyTestBehavior : MonoBehaviour
 
     void OnGUI()
     {
-        if (GUI.Button(new Rect(10, 70, 150, 30), "Pause"))
-        {
-            source.Pause();
-            Debug.Log("Pause: " + source.time);
-        }
+        // if (GUI.Button(new Rect(10, 70, 150, 30), "Pause"))
+        // {
+        //     source.Pause();
+        //     Debug.Log("Pause: " + source.time);
+        // }
 
-        if (GUI.Button(new Rect(10, 170, 150, 30), "Continue"))
-        {
-            source.UnPause();
-        }
+        // if (GUI.Button(new Rect(10, 170, 150, 30), "Continue"))
+        // {
+        //     source.UnPause();
+        // }
     }
 
     public void Play()
