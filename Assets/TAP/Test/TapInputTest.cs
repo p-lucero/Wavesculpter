@@ -17,6 +17,8 @@ public class TapInputTest : MonoBehaviour
 
     private bool haveError = false;
 
+    public MyTestBehavior other;
+
 	void Start() 
     {
 
@@ -42,7 +44,8 @@ public class TapInputTest : MonoBehaviour
 
         Rigidbody thumb_body = ingame_thumb.GetComponent<Rigidbody>();
         thumb_body.useGravity = false;
-        
+
+        other = (MyTestBehavior) GameObject.Find("GameObject").GetComponent(typeof(MyTestBehavior));
 	}
     
     private void Log(string text)
@@ -62,6 +65,10 @@ public class TapInputTest : MonoBehaviour
     {
 				bool[] arr = TapCombination.toFingers (combination);
         Log("onTapped : " + identifier + ", " + combination);
+        if (arr[1])
+        {
+            other.TweakEQParam();
+        }
 	}
 
 	void onTapConnected(string identifier, string name, int fw)

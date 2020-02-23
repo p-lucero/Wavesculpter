@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using System;
 
 public class MyTestBehavior : MonoBehaviour
@@ -14,8 +15,8 @@ public class MyTestBehavior : MonoBehaviour
     private string audio_file_loc = "Assets/chanceonus_bar.wav"; // intentionally not git-ed
 
     private AudioSource source;
-
     private AudioClip clip;
+    private AudioMixer mixer;
 
     private float duration_seconds;
     private int sample_rate;
@@ -70,6 +71,8 @@ public class MyTestBehavior : MonoBehaviour
         fft_samples = new float[N_FFT_BINS];
 
         Camera.main.GetComponent<Transform>().LookAt(amplitude_surface[N_FFT_BINS / 2, N_SAMPLE_REGIONS / 2].GetComponent<Transform>());
+
+        mixer = source.outputAudioMixerGroup.audioMixer;
     }
 
     void Awake()
@@ -129,5 +132,10 @@ public class MyTestBehavior : MonoBehaviour
         {
             source.UnPause();
         }
+    }
+
+    public void TweakEQParam()
+    {
+        mixer.SetFloat("MyExposedParam 6", .05f);
     }
 }
