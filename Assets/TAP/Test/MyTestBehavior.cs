@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class MyTestBehavior : MonoBehaviour
 {
-    // private GameObject[] cubes;
-
     private const int N_FFT_BINS = 64;
     private const int N_SAMPLE_REGIONS = 64;
     private const double HORIZONTAL_CUBE_SCALE = 0.04;

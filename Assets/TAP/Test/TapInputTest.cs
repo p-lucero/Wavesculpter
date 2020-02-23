@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class TapInputTest : MonoBehaviour 
 {
+    private GameObject ingame_thumb;
 
     public Text LogText;
 
@@ -13,6 +14,8 @@ public class TapInputTest : MonoBehaviour
     private bool mouseHIDEnabled;
 
     private string connectedTapIdentifier="";
+
+    private bool haveError = false;
 
 	void Start() 
     {
@@ -31,6 +34,14 @@ public class TapInputTest : MonoBehaviour
         tapInputManager.EnableDebug ();
         mouseHIDEnabled = false;
         Log("Hello world, this is the TAP API starting up!");
+
+        ingame_thumb = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        ingame_thumb.AddComponent(typeof(Rigidbody));
+        ingame_thumb.transform.position = new Vector3(0, 2, 0);
+        ingame_thumb.layer = 7;
+
+        Rigidbody thumb_body = ingame_thumb.GetComponent<Rigidbody>();
+        thumb_body.useGravity = false;
         
 	}
     
@@ -58,7 +69,8 @@ public class TapInputTest : MonoBehaviour
         Debug.Log("onTapConnected : " + identifier + ", " + name + ", FW: " + fw);
         Log("onTapConnected : " + identifier + ", " + name);
         this.connectedTapIdentifier = identifier;
-        StartCoroutine(WaitAndStartDataCollection());
+        // WaitAndStartDataCollection();
+        // StartCoroutine(WaitAndStartDataCollection());
     }
 
     void WaitAndStartDataCollection()
@@ -96,32 +108,35 @@ public class TapInputTest : MonoBehaviour
 
     void onRawSensorDataReceived(string tapIdentifier, RawSensorData data)
     {
-        Log("Receiving a bit of raw sensor data");
+        // Log("Receiving a bit of raw sensor data");
         //RawSensorData Object has a timestamp, type and an array points(x,y,z).
-        if (data.type == RawSensorData.DataType.Device)
-        {
-            // Fingers accelerometer.
-            // Each point in array represents the accelerometer value of a finger (thumb, index, middle, ring, pinky).
-            Vector3 thumb = data.GetPoint(RawSensorData.iDEV_THUMB);
 
-            if (thumb != null) 
-            {
-                // Do something with thumb.x, thumb.y, thumb.z
-            }
-            // Etc... use indexes: RawSensorData.iDEV_THUMB, RawSensorData.iDEV_INDEX, RawSensorData.iDEV_MIDDLE, RawSensorData.iDEV_RING, RawSensorData.iDEV_PINKY
-        }
-        else if (data.type == RawSensorData.DataType.IMU)
+        if (data != null && data.type != null && tapIdentifier != null )
         {
-            // Refers to an additional accelerometer on the Thumb sensor and a Gyro (placed on the thumb unit as well).
-            Vector3 gyro = data.GetPoint(RawSensorData.iIMU_GYRO);
-            if (gyro != null)
+            if (data.type == RawSensorData.DataType.Device)
             {
-                // Do something with gyro.x, gyro.y, gyro.z
+                // Each point in array represents the accelerometer value of a finger (thumb, index, middle, ring, pinky).
+                Vector3 thumb = data.GetPoint(RawSensorData.iDEV_THUMB);
+
+                if (thumb != null && thumb.x != null && thumb.y != null && thumb.z != null) 
+                {
+                    // ingame_thumb.GetComponent<Rigidbody>().AddForce(thumb.x/1000, 0, thumb.z/1000);
+                }
+                // Etc... use indexes: RawSensorData.iDEV_THUMB, RawSensorData.iDEV_INDEX, RawSensorData.iDEV_MIDDLE, RawSensorData.iDEV_RING, RawSensorData.iDEV_PINKY
             }
-            // Etc... use indexes: RawSensorData.iIMU_GYRO, RawSensorData.iIMU_ACCELEROMETER
+            if (data.type == RawSensorData.DataType.IMU)
+            {
+                // Refers to an additional accelerometer on the Thumb sensor and a Gyro (placed on the thumb unit as well).
+                Vector3 gyro = data.GetPoint(RawSensorData.iIMU_GYRO);
+                if (gyro != null)
+                {
+                    // Do something with gyro.x, gyro.y, gyro.z
+                }
+                // Etc... use indexes: RawSensorData.iIMU_GYRO, RawSensorData.iIMU_ACCELEROMETER
+            }
+            // -------------------------------------------------
+            // -- Please refer readme.md for more information --
+            // -------------------------------------------------
         }
-        // -------------------------------------------------
-        // -- Please refer readme.md for more information --
-        // -------------------------------------------------
     }
 }
