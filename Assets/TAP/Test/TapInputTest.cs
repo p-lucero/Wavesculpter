@@ -18,6 +18,8 @@ public class TapInputTest : MonoBehaviour
     {
 
         tapInputManager = TapInputManager.Instance;
+        // tapInputManager.SetDefaultInputMode(TAPInputMode.RawSensor(0, 0, 0), true);
+        // tapInputManager.StartRawSensorMode(this.connectedTapIdentifier, 1, 1, 1)
 
         tapInputManager.OnTapInputReceived += onTapped;
         tapInputManager.OnTapConnected += onTapConnected;
@@ -56,7 +58,17 @@ public class TapInputTest : MonoBehaviour
         Debug.Log("onTapConnected : " + identifier + ", " + name + ", FW: " + fw);
         Log("onTapConnected : " + identifier + ", " + name);
         this.connectedTapIdentifier = identifier;
+        StartCoroutine(WaitAndStartDataCollection());
+    }
+
+    void WaitAndStartDataCollection()
+    {
+        int seconds_to_wait = 15;
+        Log("About to wait for " + seconds_to_wait + " seconds");
+        // yield return new WaitForSeconds(seconds_to_wait);
+        Log("About to start the raw sensor mode on the tap");
         tapInputManager.StartRawSensorMode(this.connectedTapIdentifier, 1, 1, 1);
+        Log("Started the raw sensor mode on the tap, hopefully there are many log lines now");
     }
 
     void onTapDisconnected(string identifier)

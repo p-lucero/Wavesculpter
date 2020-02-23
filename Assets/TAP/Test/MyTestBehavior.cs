@@ -10,6 +10,7 @@ public class MyTestBehavior : MonoBehaviour
     private const int N_SAMPLE_REGIONS = 64;
     private const double HORIZONTAL_CUBE_SCALE = 0.04;
     private const double VERTICAL_CUBE_SCALE = 3;
+    private const double FFT_SCALE_BASE = 1.087;
 
     private string audio_file_loc = "Assets/chanceonus_bar.wav"; // intentionally not git-ed
 
@@ -77,6 +78,13 @@ public class MyTestBehavior : MonoBehaviour
         
     }
 
+    Color amplitude_to_RGB(double l)
+    {
+
+        l *= 0.29f;
+        return Color.HSVToRGB((l < .75f ? .05f + (float)l : .95f), 1, 4);
+    }
+
     void Update()
     {
         if (m_timeCounter < m_refreshTime)
@@ -95,14 +103,17 @@ public class MyTestBehavior : MonoBehaviour
             // int samples_this_update = (int)(m_lastFramerate * sample_rate);
             if (current_sample_set != N_SAMPLE_REGIONS) 
             {
-                source.GetSpectrumData(fft_samples, 0, FFTWindow.Triangle);
+                source.GetSpectrumData(fft_samples, 0, FFTWindow.Blackman);
                 for (int i = 0; i < N_FFT_BINS; i++)
                 {
-                    amplitude_surface[i, current_sample_set].transform.localScale = new Vector3((float)HORIZONTAL_CUBE_SCALE, (float)(fft_samples[i] * VERTICAL_CUBE_SCALE), (float)HORIZONTAL_CUBE_SCALE);
+                    amplitude_surface[i, current_sample_set].transform.localScale = new Vector3((float)HORIZONTAL_CUBE_SCALE, (float)(fft_samples[i] * VERTICAL_CUBE_SCALE * (Mathf.Pow((float)FFT_SCALE_BASE, i))), (float)HORIZONTAL_CUBE_SCALE);
+                    amplitude_surface[i, current_sample_set].GetComponent<Renderer>().material.color = amplitude_to_RGB((float)(fft_samples[i] * VERTICAL_CUBE_SCALE * (Mathf.Pow((float)FFT_SCALE_BASE, i))));
                 }
 
                 // samples_elapsed += samples_this_update;
                 current_sample_set++;
+                if (current_sample_set == N_SAMPLE_REGIONS)
+                    { current_sample_set = 0; }
             }
         // }
     }
