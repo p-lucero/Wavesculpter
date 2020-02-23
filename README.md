@@ -5,7 +5,9 @@ by the TapStrap 2 peripheral.
 
 NOTE: The code depends on an audio asset that I have not uploaded to GitHub, as I
 don't own the rights to the sample that I've been using for testing, and I didn't
-put effort into finding free audio.
+put effort into finding free audio. In order for the project to run properly, you
+will have to provide your own audio asset that you wish to play with, and make
+sure that the AudioSource in GameObject is configured to play it.
 
 Currently supports the following features:
 
